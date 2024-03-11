@@ -1,41 +1,52 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import { Icon } from 'leaflet'
-import MarkerIcon from '../assets/icon-location.svg'
+"use client"
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 interface Props {
-	ipLocation: [number, number] | any;
+  lat: number;
+  lng: number;
 }
 
-const ChangeMapView = ({ coords }: any) => {
-	const map = useMap()
-	map.setView(coords, map.getZoom())
+const Map = ({ lat, lng }: Props): JSX.Element => {
+  const mapContainerStyle = {
+    width: "100%",
+    height: "100%",
+  };
 
-	return null
-}
+  const containerStyle = {
+    width: "100%",
+    height:"100%",
+    inset:0,
+  };
 
-const Map = ({ ipLocation }: Props) => {
-	const locationIcon = new Icon({
-		iconUrl: MarkerIcon,
-		iconSize: [25, 34]
-	})
+  const center = {
+    lat: lat + .05,
+    lng: lng,
+  };
 
-	return (
-		<div className='pt-20'>
-			<MapContainer center={ipLocation} zoom={10} scrollWheelZoom={true}>
-				<TileLayer
-					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-				/>
-				<Marker position={ipLocation} icon={locationIcon}>
-					<Popup>
-						<span>Approximate IP Location</span>
-					</Popup>
-				</Marker>
-				<ChangeMapView coords={ipLocation} />
-			</MapContainer>
-		</div>
-	)
-}
+ 
 
-export default Map
+  const marker = {
+    lat: lat,
+    lng: lng,
+  };
+
+  const apiKey = process.env.NEXT_PUBLIC_apiKeyGoogleMaps;
+
+  return (
+    <section className="map-section">
+      <div style={containerStyle}>
+        <LoadScript googleMapsApiKey={`${apiKey}`}>
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={center}
+            zoom={11}
+          >
+            <Marker position={marker} />
+          </GoogleMap>
+        </LoadScript>
+      </div>
+    </section>
+  );
+};
+
+export default Map;
